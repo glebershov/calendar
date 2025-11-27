@@ -1,0 +1,9 @@
+http_server:
+  host: "0.0.0.0"
+  port: 8080
+
+postgres:
+  dsn: "postgres://calendar_user:calendar_pass@postgres:5432/calendar_db?sslmode=disable"
+
+logging:
+  level: "info"  # "debug" / "info" / "warn" / "error"
