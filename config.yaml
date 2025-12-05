@@ -4,6 +4,7 @@ http_server:
 
 postgres:
   dsn: "postgres://calendar_user:calendar_pass@postgres:5432/calendar_db?sslmode=disable"
+  auto_migrate: true
 
 logging:
   level: "info"  # "debug" / "info" / "warn" / "error"

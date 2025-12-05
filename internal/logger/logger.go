@@ -6,7 +6,6 @@ import (
     "strings"
 )
 
-// Logger — просто алиас, чтобы было удобно передавать.
 type Logger = *slog.Logger
 
 // InitLogger создаёт и настраивает логгер по строковому уровню.

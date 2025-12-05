@@ -10,5 +10,6 @@ WORKDIR /app
 RUN apk --no-cache add ca-certificates
 COPY --from=builder /app/calendar /app/calendar
 COPY config.yaml /app/config.yaml
+COPY --from=builder /app/migrations /app/migrations
 EXPOSE 8080
 CMD ["/app/calendar"]

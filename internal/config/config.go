@@ -9,6 +9,7 @@ type HTTPServerConfig struct {
 
 type PostgresConfig struct {
     DSN string `mapstructure:"dsn"`
+    AutoMigrate bool   `mapstructure:"auto_migrate"`
 }
 
 type LoggingConfig struct {
@@ -30,6 +31,7 @@ func Load() (*Config, error) {
     viper.SetDefault("http_server.host", "0.0.0.0")
     viper.SetDefault("http_server.port", 8080)
     viper.SetDefault("logging.level", "info")
+    viper.SetDefault("postgres.auto_migrate", false)
 
     if err := viper.ReadInConfig(); err != nil {
         return nil, err
