@@ -9,15 +9,16 @@ import (
 	"github.com/google/uuid"
 
 	"calendar/internal/logger"
-	"calendar/internal/storage"
+	"calendar/internal/repos"
+	"calendar/internal/services"
 )
 
 type Handlers struct {
 	log    logger.Logger
-	events storage.EventStorage
+	events services.EventsService
 }
 
-func NewHandlers(log logger.Logger, events storage.EventStorage) *Handlers {
+func NewHandlers(log logger.Logger, events services.EventsService) *Handlers {
 	return &Handlers{
 		log:    log,
 		events: events,
@@ -132,7 +133,7 @@ func (h *Handlers) CreateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	e := &storage.Event{
+	e := &repos.Event{
 		ID:          uuid.New().String(),
 		Title:       req.Title,
 		Description: req.Description,
@@ -213,7 +214,7 @@ func (h *Handlers) UpdateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	e := &storage.Event{
+	e := &repos.Event{
 		ID: id,
 	}
 

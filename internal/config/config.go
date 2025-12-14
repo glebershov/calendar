@@ -3,44 +3,52 @@ package config
 import "github.com/spf13/viper"
 
 type HTTPServerConfig struct {
-    Host string `mapstructure:"host"`
-    Port int    `mapstructure:"port"`
+	Host string `mapstructure:"host"`
+	Port int    `mapstructure:"port"`
 }
 
 type PostgresConfig struct {
-    DSN string `mapstructure:"dsn"`
-    AutoMigrate bool   `mapstructure:"auto_migrate"`
+	DSN         string `mapstructure:"dsn"`
+	AutoMigrate bool   `mapstructure:"auto_migrate"`
 }
 
 type LoggingConfig struct {
-    Level string `mapstructure:"level"`
+	Level string `mapstructure:"level"`
+}
+
+type KafkaConfig struct {
+	Brokers []string `mapstructure:"brokers"`
+	Topic   string   `mapstructure:"topic"`
 }
 
 type Config struct {
-    HTTPServer HTTPServerConfig `mapstructure:"http_server"`
-    Postgres   PostgresConfig   `mapstructure:"postgres"`
-    Logging    LoggingConfig    `mapstructure:"logging"`
+	HTTPServer HTTPServerConfig `mapstructure:"http_server"`
+	Postgres   PostgresConfig   `mapstructure:"postgres"`
+	Logging    LoggingConfig    `mapstructure:"logging"`
+	Kafka      KafkaConfig      `mapstructure:"kafka"`
 }
 
 func Load() (*Config, error) {
-    viper.SetConfigName("config")
-    viper.SetConfigType("yaml")
-    viper.AddConfigPath(".")
-    viper.AutomaticEnv() 
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+	viper.AutomaticEnv()
 
-    viper.SetDefault("http_server.host", "0.0.0.0")
-    viper.SetDefault("http_server.port", 8080)
-    viper.SetDefault("logging.level", "info")
-    viper.SetDefault("postgres.auto_migrate", false)
+	viper.SetDefault("http_server.host", "0.0.0.0")
+	viper.SetDefault("http_server.port", 8080)
+	viper.SetDefault("logging.level", "info")
+	viper.SetDefault("postgres.auto_migrate", false)
+	viper.SetDefault("kafka.brokers", []string{"localhost:19092"})
+	viper.SetDefault("kafka.topic", "events")
 
-    if err := viper.ReadInConfig(); err != nil {
-        return nil, err
-    }
+	if err := viper.ReadInConfig(); err != nil {
+		return nil, err
+	}
 
-    var cfg Config
-    if err := viper.Unmarshal(&cfg); err != nil {
-        return nil, err
-    }
+	var cfg Config
+	if err := viper.Unmarshal(&cfg); err != nil {
+		return nil, err
+	}
 
-    return &cfg, nil
+	return &cfg, nil
 }

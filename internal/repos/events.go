@@ -1,4 +1,4 @@
-package storage
+package repos
 
 import (
 	"context"
@@ -18,15 +18,16 @@ type Event struct {
 	UpdatedAt   time.Time
 }
 
-// EventStorage задаёт контракт работы с хранилищем событий.
-type EventStorage interface {
+// EventsRepo задаёт контракт работы с хранилищем событий.
+type EventsRepo interface {
 	CreateEvent(ctx context.Context, e *Event) error
 	UpdateEvent(ctx context.Context, e *Event) error
 	DeleteEvent(ctx context.Context, id string) error
 	ListEvents(ctx context.Context, ownerID string) ([]Event, error)
+	GetAllEvents(ctx context.Context) ([]Event, error)
 }
 
-// PGEventStorage — реализация EventStorage поверх PostgreSQL (*sql.DB).
+// PGEventStorage — реализация хранилища событий поверх PostgreSQL (*sql.DB).
 type PGEventStorage struct {
 	db *sql.DB
 }
@@ -65,7 +66,7 @@ func (s *PGEventStorage) UpdateEvent(ctx context.Context, e *Event) error {
 		FROM events
 		WHERE id = $1
 	`
-	
+
 	var existing Event
 	err := s.db.QueryRowContext(ctx, selectQuery, e.ID).Scan(
 		&existing.Title,
@@ -208,3 +209,48 @@ func (s *PGEventStorage) ListEvents(ctx context.Context, ownerID string) ([]Even
 	return events, nil
 }
 
+// GetAllEvents возвращает все события из БД.
+func (s *PGEventStorage) GetAllEvents(ctx context.Context) ([]Event, error) {
+	const query = `
+		SELECT
+			id,
+			title,
+			description,
+			start_time,
+			end_time,
+			owner_id,
+			created_at,
+			updated_at
+		FROM events
+		ORDER BY start_time
+	`
+
+	rows, err := s.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var events []Event
+	for rows.Next() {
+		var e Event
+		if err := rows.Scan(
+			&e.ID,
+			&e.Title,
+			&e.Description,
+			&e.StartTime,
+			&e.EndTime,
+			&e.OwnerID,
+			&e.CreatedAt,
+			&e.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		events = append(events, e)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return events, nil
+}

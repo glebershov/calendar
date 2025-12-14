@@ -7,4 +7,9 @@ postgres:
   auto_migrate: true
 
 logging:
-  level: "info"  # "debug" / "info" / "warn" / "error"
+  level: "info" # "debug" / "info" / "warn" / "error"
+
+kafka:
+  brokers:
+    - "kafka:9092"
+  topic: "events"
