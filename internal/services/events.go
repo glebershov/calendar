@@ -6,6 +6,15 @@ import (
 	"calendar/internal/repos"
 )
 
+// EventsRepo задаёт контракт работы с хранилищем событий, который нужен сервисам.
+type EventsRepo interface {
+	CreateEvent(ctx context.Context, e *repos.Event) error
+	UpdateEvent(ctx context.Context, e *repos.Event) error
+	DeleteEvent(ctx context.Context, id string) error
+	ListEvents(ctx context.Context, ownerID string) ([]repos.Event, error)
+	GetAllEvents(ctx context.Context) ([]repos.Event, error)
+}
+
 // EventsService описывает, что нужно хендлерам для работы с событиями.
 type EventsService interface {
 	CreateEvent(ctx context.Context, e *repos.Event) error
@@ -16,11 +25,11 @@ type EventsService interface {
 
 // EventsServiceImpl — реализация сервиса событий.
 type EventsServiceImpl struct {
-	repo repos.EventsRepo
+	repo EventsRepo
 }
 
 // NewEventsService создаёт новый сервис событий.
-func NewEventsService(repo repos.EventsRepo) EventsService {
+func NewEventsService(repo EventsRepo) EventsService {
 	return &EventsServiceImpl{
 		repo: repo,
 	}
@@ -45,4 +54,3 @@ func (s *EventsServiceImpl) DeleteEvent(ctx context.Context, id string) error {
 func (s *EventsServiceImpl) ListEvents(ctx context.Context, ownerID string) ([]repos.Event, error) {
 	return s.repo.ListEvents(ctx, ownerID)
 }
-

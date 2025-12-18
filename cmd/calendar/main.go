@@ -29,28 +29,6 @@ func main() {
 		log.Fatalf("failed to init application: %v", err)
 	}
 
-	//  Фоновое задание с периодическим запуском
-    // if cfg.BackgroundTask.Enabled {
-    //     ticker := time.NewTicker(cfg.BackgroundTask.Period)
-    //     stop := make(chan bool)
-
-    //     go func() {
-    //         for {
-    //             select {
-    //             case <-ticker.C:
-    //                 // бизнес-логика фоновой задачи
-    //                 log.Println("Выполняется фоновая задача...")
-    //             case <-stop:
-    //                 ticker.Stop()
-    //                 return
-    //             }
-    //         }
-    //     }()
-
-    //     defer func() {
-    //         stop <- true
-    //     }()
-
 	// 4. Запускаем приложение с graceful shutdown
 	if err := app.Run(); err != nil {
 		log.Fatalf("application stopped with error: %v", err)

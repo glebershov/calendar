@@ -8,7 +8,7 @@ import (
 
 	"calendar/internal/config"
 	"calendar/internal/logger"
-	"calendar/internal/repos"
+	"calendar/internal/services"
 
 	"github.com/segmentio/kafka-go"
 )
@@ -17,14 +17,14 @@ import (
 type Producer struct {
 	writer  *kafka.Writer
 	log     logger.Logger
-	repo    repos.EventsRepo
+	repo    services.EventsRepo
 	cfg     *config.Config
 	running bool
 	stopCh  chan struct{}
 }
 
 // NewProducer создаёт новый producer.
-func NewProducer(cfg *config.Config, log logger.Logger, repo repos.EventsRepo) *Producer {
+func NewProducer(cfg *config.Config, log logger.Logger, repo services.EventsRepo) *Producer {
 	writer := &kafka.Writer{
 		Addr:         kafka.TCP(cfg.Kafka.Brokers...),
 		Topic:        cfg.Kafka.Topic,

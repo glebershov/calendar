@@ -18,15 +18,6 @@ type Event struct {
 	UpdatedAt   time.Time
 }
 
-// EventsRepo задаёт контракт работы с хранилищем событий.
-type EventsRepo interface {
-	CreateEvent(ctx context.Context, e *Event) error
-	UpdateEvent(ctx context.Context, e *Event) error
-	DeleteEvent(ctx context.Context, id string) error
-	ListEvents(ctx context.Context, ownerID string) ([]Event, error)
-	GetAllEvents(ctx context.Context) ([]Event, error)
-}
-
 // PGEventStorage — реализация хранилища событий поверх PostgreSQL (*sql.DB).
 type PGEventStorage struct {
 	db *sql.DB
